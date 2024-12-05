@@ -26,9 +26,13 @@
     padding: 2rem;
     width: 100%;
     height: 100%;
-    display: flex;           /* Added */
-    justify-content: center; /* Added */
-    align-items: center;     /* Added */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease, background-color 0.5s ease;
+    position: relative;
+    min-width: 350px;
+    min-height: 300px;
   }
 
   /* Add this new style for the carousel */
@@ -91,6 +95,28 @@
   font-style: italic;  /* Optional: make the text italic */
   color: #ffffff;
   font-size: 1.1rem;
+}
+
+.album-container {
+    transition: all 0.3s ease, background-color 0.5s ease;
+    position: relative;  /* Added for z-index to work */
+}
+
+/* Optional: Adjust text size during expansion */
+.album-container:hover .alt-text {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+/* Add these new styles */
+#vacuumImage {
+    transition: opacity 0.5s ease;  /* Add transition for opacity */
+}
+
+#adText {
+    color: #000000;  /* Make text visible on dark background */
+    font-size: 1.3rem;
+    text-align: center;
 }
   </style>
 </head>
@@ -177,7 +203,13 @@
 
       <!-- Third row -->
       <div class="col-md-6 col-lg-4">
-        <div class="album-container">
+        <div class="album-container" id="adContainer">
+          <img src="https://picfit.topocentras.lt/xcdn-cgi/image/fit=contain,format=auto,quality=85/media/aw_rbslider/slides/CM-838-JUL-TOPO_Topo-preki_-nuoma_plaunantis-siurblys_837x545.jpg" 
+               id="vacuumImage" 
+               style="width: 350px; position: absolute;">
+          <div id="adText" style="display: none;">
+            Want a break from the ads?
+          </div>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
@@ -214,4 +246,60 @@
 <!-- Bootstrap JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get all containers in the right column (every 3rd container)
+    const rightColumnContainers = document.querySelectorAll('.col-md-6.col-lg-4:nth-child(3n) .album-container');
+
+    // Add hover events to right column containers
+    rightColumnContainers.forEach(container => {
+        container.addEventListener('mouseenter', function() {
+            // Expand container
+            this.style.transform = 'scale(1.03)';
+            this.style.transition = 'all 0.3s ease';
+            this.style.zIndex = '1000';  // Bring to front
+        });
+
+        container.addEventListener('mouseleave', function() {
+            // Reset container
+            this.style.transform = 'scale(1)';
+            this.style.zIndex = '1';
+        });
+    });
+
+    // Ad container interaction
+    const adContainer = document.getElementById('adContainer');
+    if (adContainer) {
+        const vacuumImage = document.getElementById('vacuumImage');
+        const adText = document.getElementById('adText');
+        
+        adContainer.addEventListener('mouseenter', function() {
+            if (vacuumImage && adText) {
+                vacuumImage.style.opacity = '0';
+                adText.style.display = 'block';
+                adText.style.opacity = '1';
+                adContainer.style.backgroundColor = '#DAE8D9'; // Light cream color
+                setTimeout(() => {
+                    vacuumImage.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // Add mouseleave event to reset the container
+        adContainer.addEventListener('mouseleave', function() {
+            if (vacuumImage && adText) {
+                vacuumImage.style.display = 'block';
+                vacuumImage.style.opacity = '1';
+                adText.style.opacity = '0';
+                adContainer.style.backgroundColor = 'transparent'; // Reset background color
+                setTimeout(() => {
+                    adText.style.display = 'none';
+                }, 500);
+            }
+        });
+    }
+});
+</script>
+
 </html>
